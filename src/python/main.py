@@ -12,7 +12,7 @@ from skimage.io import imsave
 from skimage.transform import rescale
 
 class ImpactSim:
-    def __init__(self):
+    def __init__(self, velocity=10., n_layers=1, thickness=10):
         self.cuda = False
         self.nCudaThreads=32
         self.dtype = np.float64
@@ -21,14 +21,19 @@ class ImpactSim:
         self.rcut = 5. #2.5
         self.maxNeis = 100
         self.vmax = 2
-        self.v0 = 8.
+
+        #___________________input variables_________________
+        self.v0 = velocity
+        self.n_layers = n_layers
+        self.thickness = thickness
+        #___________________________________________________
         self.nx = 5
-        self.ny = 400 #400 #80
+        self.ny = 100 #400 #80
         self.d = 1.1 #1.222
         self.nat = 0
         self.ats = np.zeros((0, 2), dtype=self.dtype)
         self.v = np.zeros((0, 2), dtype=self.dtype)
-        self.dt = 0.003
+        self.dt = 0.01
         #for i in range(self.nx):
         #    for j in range(self.ny):
         #        self.ats[i + j * self.nx, :] = (i * self.d, (j - self.ny/2) * self.d + 0.5 * self.d * (i % 2))
@@ -50,13 +55,15 @@ class ImpactSim:
         # not safe
       #  self.addLayer(-85, 20, flip=False)
 
-        self.addLayer(0, 140, flip=False) # -42, 50
-        #self.addLayer(300, 200, flip=False) # -42, 50
+        d = 0
+        for i in range(self.n_layers):
+            self.addLayer(d, self.thickness, flip=False) # -42, 50
+            d = self.thickness + (i+1) * 20
 
         theta = 0 #np.pi/2 * 0.7
         v = [np.cos(theta) * self.v0, -np.sin(theta) * self.v0]
-       # self.addParticle(np.array([-100., 0.]), v, 6, 6)
-        self.addParticle(np.array([-100., 0.]), v, 50, 50) # 50
+        self.addParticle(np.array([-20., 0.]), v, 6, 6)
+       # self.addParticle(np.array([-100., 0.]), v, 50, 50) # 50
 
         #for i in range(1):
         #    neis, nneis = buildNeighbourList(self.ats, self.rcut*5, maxNeis=self.maxNeis*25)
@@ -175,7 +182,7 @@ class ImpactSim:
         #self.scat.set_color([(255, 0, 0)] * self.nat)
 
         resolution = 1.7 # pixels per unit
-        dotsize = 3 # pixels
+        dotsize = 10 # pixels
         im = draw(750 * resolution, 500 * resolution, 1.0 / resolution, np.array([-150, -250]), self.ats, c, dotsize)
         #im = rescale(im, 0.2, anti_aliasing=True, multichannel=True)
         im = np.uint8(im*255)
@@ -240,12 +247,34 @@ class ImpactSim:
         return neis
 
 
+def read_in(filename):
+    f = open(filename, 'r')
+    for line in f:
+        if 'schritte' in line:
+            n_steps = int(line.split()[-1])
+        elif 'geschwindigkeit' in line:
+            velocity = float(line.split()[-1])
+        elif 'schichten' in line:
+            n_layers = int(line.split()[-1])
+        elif 'schichtdicke' in line:
+            thickness = int(line.split()[-1])
+
+    return n_steps, velocity, n_layers, thickness
+
+
+
+
+
 if __name__ == '__main__':
-    impactSim = ImpactSim()
+    filename = 'input.txt'
+    n_steps, velocity, n_layers, thickness = read_in(filename)
+    impactSim = ImpactSim(velocity=velocity,
+                            n_layers = n_layers,
+                            thickness = thickness)
     #impactSim.anim.save('impact.mp4', writer=animation.FFMpegWriter(fps=30))
     #plt.show()
     impactSim.setup()
-    for i in range(500):
+    for i in range(n_steps):
         impactSim.updateSim()
         impactSim.savePic(i)
 

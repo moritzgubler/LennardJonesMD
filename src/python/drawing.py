@@ -11,6 +11,8 @@ for i in range(dotsize):
 def draw(nx, ny, dx, x0, ats, colors, dotsize):
 
     nat = ats.shape[0]
+    nx = int(nx)
+    ny = int(ny)
     im = np.ones((nx, ny, 3))
     for i in range(nat):
         x = int((ats[i,0] - x0[0]) / dx - (dotsize-1) / 2)
