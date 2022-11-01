@@ -182,13 +182,14 @@ class ImpactSim:
         #self.scat.set_color([(255, 0, 0)] * self.nat)
 
         resolution = 1.7 # pixels per unit
-        dotsize = 10 # pixels
-        im = draw(750 * resolution, 500 * resolution, 1.0 / resolution, np.array([-150, -250]), self.ats, c, dotsize)
+        dotsize = 3 # pixels
+        im = draw(400 * resolution, 500 * resolution, 1.0 / resolution, np.array([-150, -250]), self.ats, c, dotsize)
         #im = rescale(im, 0.2, anti_aliasing=True, multichannel=True)
         im = np.uint8(im*255)
-        imsave('{:05d}.png'.format(i), im)
+        imsave('{:05d}.png'.format(iteration), im)
         t_end = time.time()
         print('T(image) ', t_end - t_start)
+
 
     def updateSim(self):
         t_start_update = time.time()
@@ -274,7 +275,9 @@ if __name__ == '__main__':
     #impactSim.anim.save('impact.mp4', writer=animation.FFMpegWriter(fps=30))
     #plt.show()
     impactSim.setup()
+    k = 0
     for i in range(n_steps):
         impactSim.updateSim()
-        impactSim.savePic(i)
-
+        if i%10 == 0:
+            impactSim.savePic(k)
+            k+=1

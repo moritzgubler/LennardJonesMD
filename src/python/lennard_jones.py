@@ -4,7 +4,7 @@ from numba import jit, cuda
 import scipy.spatial
 
 
-#@jit(nopython=True, parallel=True)
+@jit(nopython=True, parallel=True)
 def force(ats):
     rcut = 3.0
     nat = ats.shape[0]
