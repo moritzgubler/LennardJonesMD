@@ -10,6 +10,7 @@ from numba import cuda
 from drawing import draw
 from skimage.io import imsave
 from skimage.transform import rescale
+import os
 
 class ImpactSim:
     def __init__(self, velocity=10., n_layers=1, thickness=10):
@@ -170,7 +171,7 @@ class ImpactSim:
 
         return self.scat,
 
-    def savePic(self, iteration):
+    def savePic(self, iteration, path):
         t_start = time.time()
         c = np.sqrt(np.sum(self.v**2, axis=1)) / self.vmax
         #print(np.max(self.eat))
@@ -186,7 +187,8 @@ class ImpactSim:
         im = draw(400 * resolution, 500 * resolution, 1.0 / resolution, np.array([-150, -250]), self.ats, c, dotsize)
         #im = rescale(im, 0.2, anti_aliasing=True, multichannel=True)
         im = np.uint8(im*255)
-        imsave('{:05d}.png'.format(iteration), im)
+        filename = path+'/{:05d}.png'.format(iteration)
+        imsave(filename, im)
         t_end = time.time()
         print('T(image) ', t_end - t_start)
 
@@ -275,9 +277,14 @@ if __name__ == '__main__':
     #impactSim.anim.save('impact.mp4', writer=animation.FFMpegWriter(fps=30))
     #plt.show()
     impactSim.setup()
+
+    path = 'images'
+    if not os.path.exists(path):
+        os.mkdir(path)
+
     k = 0
     for i in range(n_steps):
         impactSim.updateSim()
         if i%10 == 0:
-            impactSim.savePic(k)
+            impactSim.savePic(k, path)
             k+=1

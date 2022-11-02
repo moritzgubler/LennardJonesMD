@@ -1,4 +1,4 @@
 schritte               2500       
-geschwindigkeit        8.      
-anzahl schichten       3
-schichtdicke           5
+geschwindigkeit        3.      
+anzahl schichten       1
+schichtdicke           10
