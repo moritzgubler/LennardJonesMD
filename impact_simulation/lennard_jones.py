@@ -168,9 +168,10 @@ def buildNeighbourList(ats, rc, maxNeis=100):
 
 
 @jit(nopython=False, parallel=False)
-def force_co(ats, neis, nneis, maxNeis=100):
+def force_co(ats, neis, nneis):
 
     #lj_rc = 4.0 * (1.0 / rc**12 - 1.0 / rc**6)
+    maxNeis = np.max(nneis)
     nat = ats.shape[0]
     e = 0.0
     f = np.zeros(ats.shape)
@@ -186,7 +187,7 @@ def force_co(ats, neis, nneis, maxNeis=100):
         #neis = tree.query_ball_point(ats[i,:], rc)
         n = nneis[i]
         dr[:n, :] = ats[i,:] - ats[neis[i,:nneis[i]],:]
-        dd6[:n] = 1.0 / np.sum(dr[:n]**2, axis = 1)
+        dd2[:n] = 1.0 / np.sum(dr[:n]**2, axis = 1)
         dd6[:n] = dd2[:n] * dd2[:n] * dd2[:n]
         dd12[:n] = dd6[:n] * dd6[:n]
 
