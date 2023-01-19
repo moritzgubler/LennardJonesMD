@@ -1,5 +1,6 @@
 import impact_simulation.impactSim
 import os
+import shelve
 
 def main():
     filename = 'input.txt'
@@ -16,11 +17,14 @@ def main():
         os.mkdir(path)
 
     k = 0
-    for i in range(n_steps):
-        impactSim.updateSim()
-        if i%10 == 0:
-            impactSim.savePic(k, path)
-            k+=1
+
+    with shelve.open('fp.npz') as fp, shelve.open('fc.npz') as fc:
+        for i in range(n_steps):
+            impactSim.updateSim()
+            if i%5 == 0:
+                impactSim.savePic(k, path)
+                impactSim.savePos(k, fp, fc)
+                k+=1
 
 
 if __name__ == '__main__':
@@ -36,4 +40,4 @@ if __name__ == '__main__':
     sortby = SortKey.CUMULATIVE
     ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
     ps.print_stats()
-    print(s.getvalue())
+    # print(s.getvalue())

@@ -162,6 +162,12 @@ class ImpactSim:
         t_end = time.time()
         # print('T(image) ', t_end - t_start)
 
+    def savePos(self, iteration, shelve_pos, shelve_col):
+        c = np.sqrt(np.sum(self.v**2, axis=1)) / self.vmax
+        c = np.concatenate((c.reshape((self.nat, 1)), np.zeros((self.nat, 2))), axis=1)
+        c = np.minimum(c, 1.0)
+        shelve_col[str(iteration)] = c
+        shelve_pos[str(iteration)] = self.ats
 
     def updateSim(self):
         t_start_update = time.time()
