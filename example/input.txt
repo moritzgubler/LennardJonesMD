@@ -1,4 +1,4 @@
-schritte               2500       
+schritte               1000       
 geschwindigkeit        3.      
 anzahl schichten       1
 schichtdicke           10

@@ -35,26 +35,6 @@ class ImpactSim:
         self.ats = np.zeros((0, 2), dtype=self.dtype)
         self.v = np.zeros((0, 2), dtype=self.dtype)
         self.dt = 0.01
-        #for i in range(self.nx):
-        #    for j in range(self.ny):
-        #        self.ats[i + j * self.nx, :] = (i * self.d, (j - self.ny/2) * self.d + 0.5 * self.d * (i % 2))
-        #self.addLayer(  0, 3)
-        #self.addLayer(-40, 5*4, flip=False)
-        #self.addLayer(-20, 10)
-        #self.addLayer(-50, 10)
-        #self.addLayer(-25, 4, flip=False)
-  #      self.addLayer(-35, 8, flip=False)
-        #self.addLayer(-45, 4, flip=False)
-        #self.addLayer(-55, 4, flip=False)
-  #      self.addLayer(-65, 3, flip=False)
-        #self.addLayer(-75, 4, flip=False)
-
-        # safe
-      #  self.addLayer(-25, 16, flip=False)
-      #  self.addLayer(-55, 2, flip=False)
-      #  self.addLayer(-85, 2, flip=False)
-        # not safe
-      #  self.addLayer(-85, 20, flip=False)
 
         d = 0
         for i in range(self.n_layers):
@@ -64,11 +44,7 @@ class ImpactSim:
         theta = 0 #np.pi/2 * 0.7
         v = [np.cos(theta) * self.v0, -np.sin(theta) * self.v0]
         self.addParticle(np.array([-20., 0.]), v, 6, 6)
-       # self.addParticle(np.array([-100., 0.]), v, 50, 50) # 50
 
-        #for i in range(1):
-        #    neis, nneis = buildNeighbourList(self.ats, self.rcut*5, maxNeis=self.maxNeis*25)
-        #    relax(self.ats, neis, nneis, force, 0)
         print('nat', self.nat)
 
 
@@ -77,14 +53,8 @@ class ImpactSim:
             self.m = np.ones((self.nat,), dtype=self.dtype)
         else:
             self.m = np.ones((self.nat, 2), dtype=self.dtype)
-        #self.m += np.random.rand(self.m.size).reshape(self.m.shape) * 1.4
+
         self.v += np.random.randn(self.v.size).reshape(self.v.shape) * 0.2
-        #self.ats[0, :] = [-100, 40] # [-100, 0]
-        #self.ats[0, :] = [-100, 0] # [-100, 0]
-        #theta = 0 #np.pi/2 * 0.7
-        #self.v[0, :] = [np.cos(theta) * self.v0, -np.sin(theta) * self.v0]
-        #self.m[0,:] = 10
-        #self.m = np.repeat(self.m[:, np.newaxis], 2, axis=1)
 
         self.fig = plt.figure()
         #self.ax = plt.axes(xlim=(-120, 30), ylim=(-50, 50))
@@ -190,7 +160,7 @@ class ImpactSim:
         filename = path+'/{:05d}.png'.format(iteration)
         imsave(filename, im)
         t_end = time.time()
-        print('T(image) ', t_end - t_start)
+        # print('T(image) ', t_end - t_start)
 
 
     def updateSim(self):
@@ -237,7 +207,7 @@ class ImpactSim:
     #       t_end = time.time()
     #       print('T(copy)', t_end - t_start)
         t_end_update = time.time()
-        print('T(update)', t_end_update - t_start_update)
+        # print('T(update)', t_end_update - t_start_update)
 
     # use a grid for performance?
     def neilist(self):

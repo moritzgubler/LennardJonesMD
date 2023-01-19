@@ -179,17 +179,17 @@ def force_co(ats, neis, nneis):
         #for j in range(i):
         #neis = tree.query_ball_point(ats[i,:], rc)
         for j in neis[i,:nneis[i]]:
-            if True: #i < j:
+            if i < j:
                 dr = ats[i,:] - ats[j,:]
                 dd = np.sum(dr**2)
                 dd2 = 1.0 / dd
                 dd6 = dd2 * dd2 * dd2
                 dd12 = dd6 * dd6
-                e += 4.0 * (dd12 - dd6) #+ lj_rc
+                e += 8.0 * (dd12 - dd6) #+ lj_rc
                 tt = 24.0 * dd2 * (2.0 * dd12 - dd6)
                 t = dr * tt
                 f[i,:] += t
-                #f[j,:] -= t
+                f[j,:] -= t
     return e, f
 
 # not computing e for the moment
