@@ -1,9 +1,10 @@
-
+import impact_simulation.impactSim
+import os
 
 
 filename = 'input.txt'
-n_steps, velocity, n_layers, thickness = read_in(filename)
-impactSim = ImpactSim(velocity=velocity,
+n_steps, velocity, n_layers, thickness = impact_simulation.impactSim.read_in(filename)
+impactSim = impact_simulation.impactSim.ImpactSim(velocity=velocity,
                         n_layers = n_layers,
                         thickness = thickness)
 #impactSim.anim.save('impact.mp4', writer=animation.FFMpegWriter(fps=30))

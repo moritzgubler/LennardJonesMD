@@ -1,6 +1,6 @@
 from impact_simulation.integration import verlet
 from impact_simulation.lennard_jones import force_co as force
-from impact_simulation.main import ImpactSim
+from impact_simulation.impactSim import ImpactSim
 
 import numpy as np
 import timeit
