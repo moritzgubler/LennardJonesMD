@@ -168,28 +168,35 @@ def buildNeighbourList(ats, rc, maxNeis=100):
 
 
 @jit(nopython=False, parallel=False)
-def force_co(ats, neis, nneis):
+def force_co(ats, neis, nneis, maxNeis=100):
 
     #lj_rc = 4.0 * (1.0 / rc**12 - 1.0 / rc**6)
     nat = ats.shape[0]
-    e = 0.
+    e = 0.0
     f = np.zeros(ats.shape)
+    t = np.zeros((maxNeis, 2))
+    dr = np.zeros((maxNeis, 2))
+    dd2 = np.zeros(maxNeis)
+    dd6 = np.zeros(maxNeis)
+    dd12 = np.zeros(maxNeis)
+    tt = np.zeros(maxNeis)
 
     for i in range(nat):
         #for j in range(i):
         #neis = tree.query_ball_point(ats[i,:], rc)
-        for j in neis[i,:nneis[i]]:
-            if i < j:
-                dr = ats[i,:] - ats[j,:]
-                dd = np.sum(dr**2)
-                dd2 = 1.0 / dd
-                dd6 = dd2 * dd2 * dd2
-                dd12 = dd6 * dd6
-                e += 8.0 * (dd12 - dd6) #+ lj_rc
-                tt = 24.0 * dd2 * (2.0 * dd12 - dd6)
-                t = dr * tt
-                f[i,:] += t
-                f[j,:] -= t
+        n = nneis[i]
+        dr[:n, :] = ats[i,:] - ats[neis[i,:nneis[i]],:]
+        dd6[:n] = 1.0 / np.sum(dr[:n]**2, axis = 1)
+        dd6[:n] = dd2[:n] * dd2[:n] * dd2[:n]
+        dd12[:n] = dd6[:n] * dd6[:n]
+
+        e += 4 * np.sum(dd12[:n] - dd6[:n])
+
+        tt[:n] = 24.0 * dd2[:n] * (2.0 * dd12[:n] - dd6[:n])
+
+        t[:n, 0] = dr[:n, 0] * tt[:n]
+        t[:n, 1] = dr[:n, 1] * tt[:n]
+        f[i, :] += np.sum(t[:n, :], axis = 0)
     return e, f
 
 # not computing e for the moment
