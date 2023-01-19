@@ -45,7 +45,7 @@ class ImpactSim:
         v = [np.cos(theta) * self.v0, -np.sin(theta) * self.v0]
         self.addParticle(np.array([-20., 0.]), v, 6, 6)
 
-        print('nat', self.nat)
+        print('Number of particles: ', self.nat)
 
 
         #self.v = np.zeros((self.nat, 2))
@@ -56,16 +56,16 @@ class ImpactSim:
 
         self.v += np.random.randn(self.v.size).reshape(self.v.shape) * 0.2
 
-        self.fig = plt.figure()
-        #self.ax = plt.axes(xlim=(-120, 30), ylim=(-50, 50))
-        self.ax = plt.axes(xlim=(-150, 600), ylim=(-250, 250))
-        self.anim = animation.FuncAnimation(
-            self.fig,
-            self.update,
-            init_func=self.setup,
-            frames=100,
-            interval=1. / 60,
-            blit=True)
+        # self.fig = plt.figure()
+        # #self.ax = plt.axes(xlim=(-120, 30), ylim=(-50, 50))
+        # self.ax = plt.axes(xlim=(-150, 600), ylim=(-250, 250))
+        # self.anim = animation.FuncAnimation(
+        #     self.fig,
+        #     self.update,
+        #     init_func=self.setup,
+        #     frames=100,
+        #     interval=1. / 60,
+        #     blit=True)
         if self.cuda:
             self.ats_d = cuda.to_device(self.ats)
             self.v_d = cuda.to_device(self.v)
@@ -112,9 +112,9 @@ class ImpactSim:
         self.ats = np.concatenate((self.ats, newats), axis=0)
         self.v = np.concatenate((self.v, np.zeros(newats.shape, dtype=self.dtype)), axis=0)
 
-    def setup(self):
-        self.scat = self.ax.scatter(self.ats[:,0], self.ats[:,1])
-        return self.scat,
+    # def setup(self):
+    #     self.scat = self.ax.scatter(self.ats[:,0], self.ats[:,1])
+    #     return self.scat,
 
     def update(self, iteration):
         print('iteration ', iteration)

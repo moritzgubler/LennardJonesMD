@@ -15,16 +15,18 @@ def main():
     os = 5
 
     fig, ax = plt.subplots()
+    s = ax.scatter([], [])
 
     def animate(i):
         p = pos_shelve[str(i)]
         c = col_shelve[str(i)]
-        ax.clear()
-        ax.axis([np.min(p0[:, 0]) - os,np.max(p0[:, 0]) + os,np.min(p0[:, 1]) - os,np.max(p0[:, 1]) + os])
+        # ax.clear()
+        # ax.axis([np.min(p0[:, 0]) - os,np.max(p0[:, 0]) + os,np.min(p0[:, 1]) - os,np.max(p0[:, 1]) + os])
 
-        ax.scatter(p[:, 0], p[:, 1], s = n_steps, c=c)
-        print(i)
-
+        # ax.scatter(p[:, 0], p[:, 1], s = n_steps, c=c)
+        # print(i)
+        s.set_offsets(p)
+        s.set_facecolor(c)
 
         # mat.set_data(p[:, 0], p[:, 1])
         # # ax.axis([np.min(p[:, 0]) - os,np.max(p[:, 0]) + os,np.min(p[:, 1]) - os,np.max(p[:, 1]) + os])
@@ -36,7 +38,7 @@ def main():
     # mat, = plt.scatter(p0[:, 0], p0[:, 1], s = n_steps, c=c0)
 
 
-    ani = animation.FuncAnimation(fig, animate, interval=10, frames=n_steps)
+    ani = animation.FuncAnimation(fig, animate, interval=20, frames=n_steps)
     plt.show()
     # ani.resume()
 

@@ -1,6 +1,7 @@
 import impact_simulation.impactSim
 import os
 import shelve
+from tqdm import tqdm
 
 def main():
     filename = 'input.txt'
@@ -10,7 +11,7 @@ def main():
                             thickness = thickness)
     #impactSim.anim.save('impact.mp4', writer=animation.FFMpegWriter(fps=30))
     #plt.show()
-    impactSim.setup()
+    # impactSim.setup()
 
     path = 'images'
     if not os.path.exists(path):
@@ -18,11 +19,15 @@ def main():
 
     k = 0
 
+    if os.path.exists('fp.npz'):
+        os.remove('fp.npz')
+    if os.path.exists('fc.npz'):
+        os.remove('fc.npz')
     with shelve.open('fp.npz') as fp, shelve.open('fc.npz') as fc:
-        for i in range(n_steps):
+        for i in tqdm( range(n_steps), desc="Calculating"):
             impactSim.updateSim()
             if i%5 == 0:
-                impactSim.savePic(k, path)
+                # impactSim.savePic(k, path)
                 impactSim.savePos(k, fp, fc)
                 k+=1
 
