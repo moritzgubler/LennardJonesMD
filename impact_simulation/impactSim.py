@@ -1,5 +1,8 @@
-from impact_simulation.integration import *
-from impact_simulation.lennard_jones import force_co, buildNeighbourList, buildNeighbourList_cuda
+# from impact_simulation.integration import *
+from lenjon import verlet
+# from impact_simulation.lennard_jones import force_co, buildNeighbourList, buildNeighbourList_cuda
+# from lenjon import force_co, buildNeighbourList
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
@@ -180,7 +183,7 @@ class ImpactSim:
             if self.cuda:
                 neis_d, nneis_d = buildNeighbourList_cuda(self.ats_d, self.rcut, self.maxNeis, self.nCudaThreads)
             else:
-                neis, nneis = buildNeighbourList(self.ats, self.rcut, maxNeis=self.maxNeis)
+                self.ats, self.v = verlet(self.ats, self.v, self.m, self.dt)
             #    absv = np.sqrt(np.sum(self.v**2, axis=1))
             #    vmax = np.max(absv[nneis > 0]) # what if fast clusters of particles escape but their relative velocity is small?
             #    dt = 20. / vmax * 0.003#0.003
@@ -198,8 +201,6 @@ class ImpactSim:
                 force_cuda[nCudaBlocks, self.nCudaThreads](self.ats_d, neis_d, nneis_d, self.f_d, self.eat_d)
                 verlet_cuda[nCudaBlocks, self.nCudaThreads](self.ats_d, self.v_d, self.m_d, self.f_d, self.lastf_d,
                                                             self.dt, 1)
-            else:
-                self.ats, self.v = verlet(self.ats, self.v, self.m, neis, nneis, force_co, self.dt, 1)
         #        t_end = time.time()
         #        print('T(verlet)', t_end - t_start)
         # relax(self.ats, neis, nneis, force, 10)
