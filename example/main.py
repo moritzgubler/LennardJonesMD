@@ -14,8 +14,6 @@ def main():
     # impactSim.setup()
 
     path = 'images'
-    if not os.path.exists(path):
-        os.mkdir(path)
 
     k = 0
 
