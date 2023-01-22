@@ -1,0 +1,9 @@
+{
+"schritte" :              100,
+"geschwindigkeit":       12.0,
+"anzahl schichten":     8,
+"schichtdicke":     4,
+"winkel": 10,
+"schichtung": 0,
+"zeitschritt": 0.01
+}

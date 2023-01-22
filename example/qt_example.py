@@ -15,11 +15,10 @@ class App(QtWidgets.QMainWindow):
         pg.setConfigOption('foreground', 'k')
 
         self.pos_shelve = shelve.open('fp.npz')
-        self.col_shelve = shelve.open('fc.npz')
 
-        self.targetfps = 60
+        self.targetfps = 30
         self.targetTime = 1 / self.targetfps
-        self.ncolors = 8
+        self.ncolors = 32
 
         #### Create Gui Elements ###########
         self.mainbox = QtWidgets.QWidget()
@@ -34,8 +33,7 @@ class App(QtWidgets.QMainWindow):
 
         self.view = self.canvas.addViewBox()
         self.view.setAspectLocked(True)
-        self.p0 = self.pos_shelve[str(0)]
-        self.c0 = self.col_shelve[str(0)]
+        self.p0, self.c0 = self.pos_shelve[str(0)]
 
         self.offset=2.0
         self.minx = np.min(self.p0[:,0]) - self.offset
@@ -77,8 +75,7 @@ class App(QtWidgets.QMainWindow):
 
     def _update(self):
 
-        self.p = self.pos_shelve[str(self.counter)]
-        self.col = self.col_shelve[str(self.counter)]
+        self.p, self.col = self.pos_shelve[str(self.counter)]
 
         for i, c in enumerate(self.col):
             self.brushes[i] = self.brushList[int(c[0]*(self.ncolors-1))]
@@ -93,7 +90,7 @@ class App(QtWidgets.QMainWindow):
         if dt <= 0:
             dt = 0.000000000001
         if dt <= self.targetTime:
-            print("delaying")
+            # print("delaying")
             time.sleep(self.targetTime - dt)
         now = time.time()
         dt = (now-self.lastupdate)
@@ -106,6 +103,9 @@ class App(QtWidgets.QMainWindow):
         self.counter += 1
         if self.counter >= self.n_steps:
             self.counter = 0
+
+def pprint():
+    print("hi")
 
 
 if __name__ == '__main__':

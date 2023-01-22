@@ -11,15 +11,16 @@ from impact_simulation.drawing import draw
 from skimage.io import imsave
 from skimage.transform import rescale
 import os
+import json
 
 class ImpactSim:
-    def __init__(self, velocity=10., n_layers=1, thickness=10):
+    def __init__(self, velocity=10., n_layers=1, thickness=10, dt=0.01, theta=0, layerFlip = [False]):
         self.cuda = False
         self.nCudaThreads=32
         self.dtype = np.float64
         if self.cuda:
             self.dtype = np.float32
-        self.rcut = 5. #2.5
+        self.rcut = 3. #2.5
         self.maxNeis = 100
         self.vmax = 2
 
@@ -34,14 +35,14 @@ class ImpactSim:
         self.nat = 0
         self.ats = np.zeros((0, 2), dtype=self.dtype)
         self.v = np.zeros((0, 2), dtype=self.dtype)
-        self.dt = 0.01
+        self.dt = dt
 
         d = 0
         for i in range(self.n_layers):
-            self.addLayer(d, self.thickness, flip=False) # -42, 50
-            d = self.thickness + (i+1) * 20
+            self.addLayer(d, self.thickness[i], flip=layerFlip[i]) # -42, 50
+            d = self.thickness[i] + (i+1) * 20
 
-        theta = 0 #np.pi/2 * 0.7
+        # theta = 0 #np.pi/2 * 0.7
         v = [np.cos(theta) * self.v0, -np.sin(theta) * self.v0]
         self.addParticle(np.array([-20., 0.]), v, 6, 6)
 
@@ -162,12 +163,11 @@ class ImpactSim:
         t_end = time.time()
         # print('T(image) ', t_end - t_start)
 
-    def savePos(self, iteration, shelve_pos, shelve_col):
+    def savePos(self, iteration, shelve_pos):
         c = np.sqrt(np.sum(self.v**2, axis=1)) / self.vmax
         c = np.concatenate((c.reshape((self.nat, 1)), np.zeros((self.nat, 2))), axis=1)
         c = np.minimum(c, 1.0)
-        shelve_col[str(iteration)] = c
-        shelve_pos[str(iteration)] = self.ats
+        shelve_pos[str(iteration)] = [self.ats, c]
 
     def updateSim(self):
         t_start_update = time.time()
@@ -197,9 +197,9 @@ class ImpactSim:
                 nCudaBlocks = int((self.nat + self.nCudaThreads - 1) / self.nCudaThreads)
                 force_cuda[nCudaBlocks, self.nCudaThreads](self.ats_d, neis_d, nneis_d, self.f_d, self.eat_d)
                 verlet_cuda[nCudaBlocks, self.nCudaThreads](self.ats_d, self.v_d, self.m_d, self.f_d, self.lastf_d,
-                                                            self.dt, 1)
+                                                            self.dt, 10)
             else:
-                self.ats, self.v = verlet(self.ats, self.v, self.m, neis, nneis, force_co, self.dt, 1)
+                self.ats, self.v = verlet(self.ats, self.v, self.m, neis, nneis, force_co, self.dt, 10)
         #        t_end = time.time()
         #        print('T(verlet)', t_end - t_start)
         # relax(self.ats, neis, nneis, force, 10)
@@ -227,18 +227,39 @@ class ImpactSim:
 
 
 def read_in(filename):
-    f = open(filename, 'r')
-    for line in f:
-        if 'schritte' in line:
-            n_steps = int(line.split()[-1])
-        elif 'geschwindigkeit' in line:
-            velocity = float(line.split()[-1])
-        elif 'schichten' in line:
-            n_layers = int(line.split()[-1])
-        elif 'schichtdicke' in line:
-            thickness = int(line.split()[-1])
+    paramDict = {
+        'schritte': 500,
+        'geschwindigkeit': 5.0,
+        'anzahl schichten': 2,
+        'schichtdicke': 10,
+        'winkel': 0.0,
+        'zeitschritt': 0.01,
+        'schichtung': False
+    }
+    with open(filename) as f:
+        d = json.load(f)
+    d = paramDict | d
+    if not type(d["schichtung"]) is list: 
+        d["schichtung"] = [d["schichtung"]]
+    if not type(d["schichtdicke"]) is list: 
+        d["schichtdicke"] = [d["schichtdicke"]]
 
-    return n_steps, velocity, n_layers, thickness
+    if len(d["schichtung"]) is not d['anzahl schichten']:
+        temp = d["schichtung"][0]
+        d["schichtung"] = []
+        for _ in range(d['anzahl schichten']):
+            d["schichtung"].append(temp)
+
+    if len(d["schichtdicke"]) is not d['anzahl schichten']:
+        temp = d["schichtdicke"][0]
+        d["schichtdicke"] = []
+        for _ in range(d['anzahl schichten']):
+            d["schichtdicke"].append(temp)
+
+    d["winkel"] = d["winkel"] * 0.0174533
+
+    return d["schritte"], d["geschwindigkeit"], d["anzahl schichten"], d['schichtdicke'], d["winkel"]\
+        , d["zeitschritt"], d["schichtung"]
 
 
 
