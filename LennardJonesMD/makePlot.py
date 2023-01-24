@@ -5,16 +5,17 @@ import numpy as np
 import pyqtgraph as pg
 import shelve
 import time
+import argparse
 
 class App(QtWidgets.QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, shelveFilename='positions.dat'):
         super(App, self).__init__(parent)
 
 
         pg.setConfigOption('background', 'w')
         pg.setConfigOption('foreground', 'k')
 
-        self.pos_shelve = shelve.open('fp.npz')
+        self.pos_shelve = shelve.open(shelveFilename)
 
         self.scale = 8.0
 
@@ -109,13 +110,23 @@ class App(QtWidgets.QMainWindow):
             self.counter = 0
 
 def main():
+    inputFilename = 'positions.dat'
+
+    parser = argparse.ArgumentParser(description ='Run a 2d Lennard Jones Simulation')
+    parser.add_argument('-i', '--inputfile', dest ='inputFilename',
+                    action ='store', help ='name of input file. Default is '+inputFilename, default=inputFilename)
+
+    args = parser.parse_args()
+
+    inputFilename = args.inputFilename
+
     pg.setConfigOptions(useOpenGL=False)
     # QtWidgets.QApplication.setHighDpiScaleFactorRoundingPolicy(QtCore.Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     # QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
     app = QtWidgets.QApplication(sys.argv)
     # app.setAttribute(QtCore.Qt.AA_Use96Dpi)
-    thisapp = App()
+    thisapp = App(shelveFilename=inputFilename)
     thisapp.show()
     sys.exit(app.exec_())
 
