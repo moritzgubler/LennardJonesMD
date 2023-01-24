@@ -11,7 +11,7 @@ def main():
     [p0, c0] = pos_shelve[str(0)]
 
     os = 5
-
+    plt.axis("off")
     fig, ax = plt.subplots()
     s = ax.scatter([], [])
 
@@ -28,8 +28,6 @@ def main():
         # mat.set_data(p[:, 0], p[:, 1])
         # # ax.axis([np.min(p[:, 0]) - os,np.max(p[:, 0]) + os,np.min(p[:, 1]) - os,np.max(p[:, 1]) + os])
         # return mat)
-
-    print(c0.shape)
 
     ax.axis([np.min(p0[:, 0]) - os,np.max(p0[:, 0]) + os,np.min(p0[:, 1]) - os,np.max(p0[:, 1]) + os])
     # mat, = plt.scatter(p0[:, 0], p0[:, 1], s = n_steps, c=c0)
