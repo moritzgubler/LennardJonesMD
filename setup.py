@@ -1,12 +1,12 @@
 from setuptools import setup
 
 setup(
-    name='impact_simulation',
+    name='LennardJonesMD',
     version='1.0.0',
-    description='impact_simulation',
-    url='https://github.com/moritzgubler/vc-sqnm',
+    description='LennardJonesMD',
+    url='https://github.com/moritzgubler/LennardJonesMD.git',
     author='Marco Krummenacher, Jonas Finkler, Moritz Guber',
-    packages=['impact_simulation'],
+    packages=['LennardJonesMD'],
     install_requires=[
                     'numba',
                     'numpy',
@@ -15,6 +15,13 @@ setup(
                     'scikit-image',
                     'tqdm',
                     'pyqtgraph'
-                      ]
+                      ],
+    entry_points={
+      'console_scripts': [
+        'runSimulation=LennardJonesMD.runSimulation:main',
+        'makePlot=LennardJonesMD.makePlot:main',
+        'makeMovie=LennardJonesMD.makeMovie:main'
+      ]
+    }
 )
 
