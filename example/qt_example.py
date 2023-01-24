@@ -16,7 +16,9 @@ class App(QtWidgets.QMainWindow):
 
         self.pos_shelve = shelve.open('fp.npz')
 
-        self.targetfps = 30
+        self.scale = 8.0
+
+        self.targetfps = 60
         self.targetTime = 1 / self.targetfps
         self.ncolors = 32
 
@@ -34,6 +36,7 @@ class App(QtWidgets.QMainWindow):
         self.view = self.canvas.addViewBox()
         self.view.setAspectLocked(True)
         self.p0, self.c0 = self.pos_shelve[str(0)]
+        self.p0 = self.p0 * self.scale
 
         self.offset=2.0
         self.minx = np.min(self.p0[:,0]) - self.offset
@@ -76,12 +79,13 @@ class App(QtWidgets.QMainWindow):
     def _update(self):
 
         self.p, self.col = self.pos_shelve[str(self.counter)]
+        self.p = self.p * self.scale
 
         for i, c in enumerate(self.col):
             self.brushes[i] = self.brushList[int(c[0]*(self.ncolors-1))]
 
         # t1 = time.time()
-        self.sc.setData(self.p[:, 0], self.p[:, 1], pen=None, brush=self.brushes)
+        self.sc.setData(self.p[:, 0], self.p[:, 1], pen=None, brush=self.brushes, antialias=False)
         # t2 = time.time()
         # print((t2 - t1))
 
@@ -97,7 +101,7 @@ class App(QtWidgets.QMainWindow):
         fps2 = 1.0 / dt
         self.lastupdate = now
         self.fps = self.fps * 0.9 + fps2 * 0.1
-        tx = 'Mean Frame Rate:  {fps:.3f} FPS'.format(fps=self.fps )
+        tx = '{fps:.3f} FPS'.format(fps=self.fps )
         self.label.setText(tx)
         QtCore.QTimer.singleShot(1, self._update)
         self.counter += 1
@@ -109,8 +113,12 @@ def pprint():
 
 
 if __name__ == '__main__':
+    pg.setConfigOptions(useOpenGL=False)
+    QtWidgets.QApplication.setHighDpiScaleFactorRoundingPolicy(QtCore.Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
     app = QtWidgets.QApplication(sys.argv)
+    app.setAttribute(QtCore.Qt.AA_Use96Dpi)
     thisapp = App()
     thisapp.show()
     sys.exit(app.exec_())
