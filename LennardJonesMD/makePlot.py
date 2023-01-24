@@ -110,11 +110,11 @@ class App(QtWidgets.QMainWindow):
 
 def main():
     pg.setConfigOptions(useOpenGL=False)
-    QtWidgets.QApplication.setHighDpiScaleFactorRoundingPolicy(QtCore.Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+    # QtWidgets.QApplication.setHighDpiScaleFactorRoundingPolicy(QtCore.Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    # QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
     app = QtWidgets.QApplication(sys.argv)
-    app.setAttribute(QtCore.Qt.AA_Use96Dpi)
+    # app.setAttribute(QtCore.Qt.AA_Use96Dpi)
     thisapp = App()
     thisapp.show()
     sys.exit(app.exec_())
