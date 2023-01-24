@@ -14,7 +14,9 @@ setup(
                     'scipy',
                     'scikit-image',
                     'tqdm',
-                    'pyqtgraph'
+                    'pyqtgraph',
+                    'matplotlib',
+                    'PyQt5'
                       ],
     entry_points={
       'console_scripts': [
