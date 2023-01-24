@@ -2,10 +2,29 @@ import LennardJonesMD.impactSim
 import os
 import shelve
 from tqdm import tqdm
+import argparse
 
 def main():
-    filename = 'input.json'
-    n_steps, velocity, n_layers, thickness, theta, dt, layerflip = LennardJonesMD.impactSim.read_in(filename)
+
+    inputFilename = 'input.json'
+    outputFilename = 'positions.dat'
+
+    parser = argparse.ArgumentParser(description ='Run a 2d Lennard Jones Simulation')
+    parser.add_argument('-i', '--inputfile', dest ='inputFilename',
+                    action ='store', help ='input file', default=inputFilename)
+    parser.add_argument('-o', '--outputfile', dest ='outputFilename',
+                    action ='store', help ='output file', default=outputFilename)
+
+    args = parser.parse_args()
+
+    inputFilename = args.inputFilename
+    outputFilename = args.outputFilename
+
+    if not os.path.exists(inputFilename):
+        print("Input file does not exist. Aborting...")
+        quit()
+
+    n_steps, velocity, n_layers, thickness, theta, dt, layerflip = LennardJonesMD.impactSim.read_in(inputFilename)
     impactSim = LennardJonesMD.impactSim.ImpactSim(velocity=velocity,
                             n_layers = n_layers,
                             thickness = thickness,
@@ -20,9 +39,9 @@ def main():
 
     k = 0
 
-    if os.path.exists('fp.npz'):
-        os.remove('fp.npz')
-    with shelve.open('fp.npz') as fp:
+    if os.path.exists(outputFilename):
+        os.remove(outputFilename)
+    with shelve.open(outputFilename) as fp:
         for i in tqdm( range(n_steps), desc="Calculating"):
             impactSim.updateSim()
             impactSim.savePos(k, fp)

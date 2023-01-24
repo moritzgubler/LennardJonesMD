@@ -17,7 +17,8 @@ setup(
                     'pyqtgraph',
                     'matplotlib',
                     'PyQt5',
-                    'progressbar2'
+                    'progressbar2',
+                    'argparse',
                     ],
     entry_points={
       'console_scripts': [
