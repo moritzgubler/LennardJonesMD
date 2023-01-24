@@ -19,7 +19,7 @@ class App(QtWidgets.QMainWindow):
 
         self.scale = 8.0
 
-        self.targetfps = 60
+        self.targetfps = 30
         self.targetTime = 1 / self.targetfps
         self.ncolors = 32
 
@@ -112,7 +112,7 @@ class App(QtWidgets.QMainWindow):
 def main():
     inputFilename = 'positions.dat'
 
-    parser = argparse.ArgumentParser(description ='Run a 2d Lennard Jones Simulation')
+    parser = argparse.ArgumentParser(description ='Plot a 2d Lennard Jones Simulation')
     parser.add_argument('-i', '--inputfile', dest ='inputFilename',
                     action ='store', help ='name of input file. Default is '+inputFilename, default=inputFilename)
 

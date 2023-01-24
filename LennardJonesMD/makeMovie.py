@@ -3,9 +3,25 @@ import matplotlib.animation as animation
 import numpy as np
 import shelve
 import progressbar
+import argparse
 
 def main():
-    pos_shelve = shelve.open('fp.npz')
+
+    inputFilename = 'positions.dat'
+    outputFilename = 'movie.mkv'
+
+    parser = argparse.ArgumentParser(description ='Make movie of a 2d Lennard Jones Simulation')
+    parser.add_argument('-i', '--inputfile', dest ='inputFilename',
+                    action ='store', help ='input filename. Defauls is '+inputFilename, default=inputFilename)
+    parser.add_argument('-o', '--outputfile', dest ='outputFilename',
+                    action ='store', help ='output file. Default is'  + outputFilename, default=outputFilename)
+
+    args = parser.parse_args()
+
+    inputFilename = args.inputFilename
+    outputFilename = args.outputFilename
+
+    pos_shelve = shelve.open(inputFilename)
 
     n_steps = len(pos_shelve)
     [p0, c0] = pos_shelve[str(0)]
@@ -13,6 +29,7 @@ def main():
     os = 5
     fig, ax = plt.subplots()
     plt.axis("off")
+    fig.set_size_inches((16,9)) 
     s = ax.scatter([], [])
 
     movie=True
@@ -46,8 +63,8 @@ def main():
     # mat, = plt.scatter(p0[:, 0], p0[:, 1], s = n_steps, c=c0)
 
 
-    ani = animation.FuncAnimation(fig, animate, interval=20, frames=n_steps)
-    ani.save('movie.mkv')
+    ani = animation.FuncAnimation(fig, animate, interval=30, frames=n_steps)
+    ani.save(outputFilename)
     movie = False
     plt.show()
     # ani.resume()
