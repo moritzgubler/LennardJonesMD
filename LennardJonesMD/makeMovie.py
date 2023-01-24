@@ -6,7 +6,6 @@ import shelve
 
 def main():
     pos_shelve = shelve.open('fp.npz')
-    col_shelve = shelve.open('fc.npz')
 
     n_steps = len(pos_shelve)
     [p0, c0] = pos_shelve[str(0)]
