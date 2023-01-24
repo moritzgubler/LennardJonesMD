@@ -11,8 +11,8 @@ def main():
     [p0, c0] = pos_shelve[str(0)]
 
     os = 5
-    plt.axis("off")
     fig, ax = plt.subplots()
+    plt.axis("off")
     s = ax.scatter([], [])
 
     def animate(i):
