@@ -11,9 +11,9 @@ def main():
 
     parser = argparse.ArgumentParser(description ='Run a 2d Lennard Jones Simulation')
     parser.add_argument('-i', '--inputfile', dest ='inputFilename',
-                    action ='store', help ='input file', default=inputFilename)
+                    action ='store', help ='input filename. Defauls is '+inputFilename, default=inputFilename)
     parser.add_argument('-o', '--outputfile', dest ='outputFilename',
-                    action ='store', help ='output file', default=outputFilename)
+                    action ='store', help ='output file. Default is'  + outputFilename, default=outputFilename)
 
     args = parser.parse_args()
 
