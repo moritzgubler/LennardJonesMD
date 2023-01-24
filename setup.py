@@ -16,8 +16,9 @@ setup(
                     'tqdm',
                     'pyqtgraph',
                     'matplotlib',
-                    'PyQt5'
-                      ],
+                    'PyQt5',
+                    'progressbar2'
+                    ],
     entry_points={
       'console_scripts': [
         'runSimulation=LennardJonesMD.runSimulation:main',

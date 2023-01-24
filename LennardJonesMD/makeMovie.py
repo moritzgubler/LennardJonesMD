@@ -1,8 +1,8 @@
-import itertools
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 import shelve
+import progressbar
 
 def main():
     pos_shelve = shelve.open('fp.npz')
@@ -15,6 +15,17 @@ def main():
     plt.axis("off")
     s = ax.scatter([], [])
 
+    movie=True
+    widgets = [' [',
+         progressbar.Timer(format= 'elapsed time: %(elapsed)s'),
+         '] ',
+           progressbar.Bar('*'),' (',
+           progressbar.ETA(), ') ',
+          ]
+    print('Creating movie')
+    bar = progressbar.ProgressBar(maxval=n_steps,
+                              widgets=widgets).start()
+
     def animate(i):
         [p, c] = pos_shelve[str(i)]
         # ax.clear()
@@ -24,6 +35,8 @@ def main():
         # print(i)
         s.set_offsets(p)
         s.set_facecolor(c)
+        if movie:
+            bar.update(i+1)
 
         # mat.set_data(p[:, 0], p[:, 1])
         # # ax.axis([np.min(p[:, 0]) - os,np.max(p[:, 0]) + os,np.min(p[:, 1]) - os,np.max(p[:, 1]) + os])
@@ -35,6 +48,7 @@ def main():
 
     ani = animation.FuncAnimation(fig, animate, interval=20, frames=n_steps)
     ani.save('movie.mkv')
+    movie = False
     plt.show()
     # ani.resume()
 
